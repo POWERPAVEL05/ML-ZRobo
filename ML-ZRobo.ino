@@ -96,17 +96,19 @@ class Arm
 
 void setup()
 {
-    Serial.begin(115200);
-    Arm a(1,2,
-        MotorServo(19),
-        MotorServo(20));
-    Point goal(3,0);
-    a.straightline(goal, 10);
+    // Serial.begin(115200);
+    // Arm a(1,2,
+    //     MotorStepper(8,9,10,11, 4096),
+    //     MotorServo(A1));
+    // Point goal(3,0);
+    // a.straightline(goal, 3);
+    MotorStepper a(8,9,10,11,2048, 20);
+    a.setAngle(180);
 
 }
 void loop()
 {
-
+    delay(1000);
 }
 
 // int main()

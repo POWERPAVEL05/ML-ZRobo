@@ -10,26 +10,36 @@ class Motor{
         virtual double update()=0;
 };
 
-// class MotorStepper : public Motor{
-//     double current_angle=0,
-//         partial=0;
-//     int speed=10,
-//     stepsPerRev;
-//     public:
-//         // return inaccuarrcy
-//         double setAngle(double angle){
-//             double delta = current_angle-angle+partial;
-//             int moveBy = delta*stepsPerRev;
-//             partial = delta-moveBy/stepsPerRev;
-//             stepBy(moveBy);
-//             return partial;
-//         }
-//     private:
-//         void stepBy(int steps)
-//         {
-//             static_assert(false, "Not Implemented!");
-//         }
-// };
+#include "Stepper.h"
+class MotorStepper : public Motor {
+    Stepper s;
+    double current_angle=0,
+        partial=0;
+    int speed,
+    stepsPerRev;
+    public:
+        MotorStepper(int in1, int in2, int in3, int in4, int stepsPerRev, int speed=5)
+        : s(stepsPerRev, in1, in2, in3, in4), speed(speed), stepsPerRev(stepsPerRev)
+        {
+            s.setSpeed(speed);
+        }
+        // return inaccuarrcy
+        double setAngle(double angle){
+            double delta = angle-current_angle+partial;
+            int moveBy = delta*stepsPerRev/360;
+            partial = delta-(moveBy*360)/stepsPerRev;
+            stepBy(moveBy);
+            current_angle+=moveBy;
+            return partial;
+        }
+        double update()
+        {}
+    private:
+        void stepBy(int steps)
+        {
+            s.step(steps);
+        }
+};
 
 #include <Servo.h>
 
@@ -45,11 +55,10 @@ class MotorServo : public Motor {
             }
             double setAngle(double angle) override
             {
-              Serial.println(angle);
-                for(int i = currentAngle; i < angle; i++){
-                  s.write(i);
-                  delay(1000/speed);
-                }
+                double dAngle = angle - currentAngle;
+              Serial.println(dAngle);
+                s.write(angle);
+                delay(1000/speed*dAngle);
                 currentAngle=angle;
                 return 0;
             }
