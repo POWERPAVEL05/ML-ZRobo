@@ -27,7 +27,7 @@ class GUI:
         self.canvas.bind("<B1-Motion>", self.draw)
         self.canvas.bind("<Button-1>", self.draw_dot)
         self.canvas.bind("<ButtonRelease-1>", self.reset_last)
-        self.clear_btn = Button(self.window, text="clear", command=lambda:self.canvas.delete("all"), bg=self.widget_bgc, fg=self.widget_fgc)
+        self.clear_btn = Button(self.window, text="clear", command=self.clear_canvas, bg=self.widget_bgc, fg=self.widget_fgc)
         self.clear_btn.place(x=15, y=510)
         self.export_btn = Button(self.window, text="export", command=self.export, bg=self.widget_bgc, fg=self.widget_fgc)
         self.export_btn.place(x=55, y=510)
@@ -38,6 +38,11 @@ class GUI:
         self.slider = Scale(self.window, from_=1, to=20, tickinterval=0, orient=HORIZONTAL, variable=self.size, bg=self.widget_bgc, fg=self.widget_fgc, highlightbackground=self.widget_fgc)
         self.slider.place(x=375, y=505)
         self.window.mainloop()
+
+
+    def clear_canvas(self):
+        self.canvas.delete("all")
+        self.points.clear()
         
     def export(self):
         f = open("export.txt", "w")
@@ -76,9 +81,11 @@ class GUI:
     def reset_last(self, event):
         self.last = None
         self.points.append("DONE")
+        print("PEN UP")
 
     def draw_dot(self, event):
-        print(event.x, event.y)
+        print("MOVE TO:", event.x, event.y)
+        print("PEN DOWN")
         if self.last == None:
             self.points.append((event.x, event.y))
             self.canvas.create_line(event.x, event.y, event.x , event.y, width=self.size.get(), fill = "black", capstyle=ROUND, joinstyle=BEVEL)
