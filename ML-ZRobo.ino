@@ -102,8 +102,16 @@ void setup()
     //     MotorServo(A1));
     // Point goal(3,0);
     // a.straightline(goal, 3);
-    MotorStepper a(8,9,10,11,2048, 20);
+    Serial.begin(115200);
+    SmallMotor a(8,9,10,11,2048, 5);
     a.setAngle(180);
+    AccelMotor b(3,2, 300);
+    b.setAngle(180);
+    for(int i=0; i<1000;i++){
+        a.update(1000);
+        b.update(1000);
+        // delay(100);
+    }
 
 }
 void loop()
